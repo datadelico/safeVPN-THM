@@ -46,7 +46,7 @@ cleanup() {
     fi
     CLEANUP_DONE=1
     
-    log "\nINFO" "Attempting to restore previous iptables rules"
+    log "INFO" "Attempting to restore previous iptables rules"
     if [ -f "$LATEST_BACKUP" ]; then
         iptables-restore < "$LATEST_BACKUP"
         log "INFO" "Previous rules restored"

@@ -35,7 +35,6 @@ Si experimentas problemas con la interfaz VPN:
 1. Edita el script y aumenta el valor de `VPN_TIMEOUT` (por defecto 60 segundos)
 2. Verifica que tu archivo de configuración OpenVPN esté correcto
 3. Comprueba los logs en `./backups/safevpn-thm.log` para obtener más detalles
-4. Utiliza el script auxiliar `helpers/network-check.sh` para diagnosticar problemas de rutas de red
 
 ### Problemas comunes
 
