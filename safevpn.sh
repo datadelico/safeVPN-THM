@@ -237,11 +237,32 @@ show_status() {
     echo "                VPN CONNECTED SUCCESSFULLY                "
     echo "---------------------------------------------------------"
     echo ""
+    echo " * Public IP: $(curl -s --max-time 5 https://ifconfig.me || curl -s --max-time 5 https://api.ipify.org || curl -s --max-time 5 https://checkip.amazonaws.com || echo "Unable to determine")"
+    echo " * DNS servers:"
+    if command -v resolvectl &>/dev/null; then
+        dns_info=$(resolvectl status 2>/dev/null | grep -E "Current DNS Server|DNS Servers|Fallback DNS" | sed 's/^[[:space:]]*//')
+        if [ -n "$dns_info" ]; then
+            echo "$dns_info" | sed 's/^/   - /'
+        else
+            echo "   - Unable to retrieve DNS information"
+        fi
+    else
+        echo "   - resolvectl not available, checking /etc/resolv.conf"
+        nameservers=$(grep nameserver /etc/resolv.conf 2>/dev/null | awk '{print $2}')
+        if [ -n "$nameservers" ]; then
+            for ns in $nameservers; do
+                echo "   - $ns"
+            done
+        else
+            echo "   - No DNS servers found"
+        fi
+    fi
     echo " * Interface: $VPN_INTERFACE"
+    echo " * Remote Server: $(grep "^remote " "$CONFIG_FILE" | awk '{print $2 " port " $3}' 2>/dev/null || echo "Not specified in config") (Protocol: $(grep "^proto " "$CONFIG_FILE" | awk '{print $2}' 2>/dev/null || echo "tcp"))"
     echo " * VPN IP address: $(ip addr show "$VPN_INTERFACE" | grep 'inet ' | awk '{print $2}')"
     echo " * Gateway: $(ip route | grep "$VPN_INTERFACE" | grep -m 1 "via" | awk '{print $3}')"
     echo " * Server: $VPN_SERVER"
-    echo " * DNS servers: $(grep -oP 'nameserver \K[0-9.]+|nameserver \K[0-9a-f:]+' /etc/resolv.conf | tr '\n' ' ')"
+
     echo " * Available VPN networks"
     ip route | grep "$VPN_INTERFACE" | awk '{print "   - " $1}'
     echo ""
