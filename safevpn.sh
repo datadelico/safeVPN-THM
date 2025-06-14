@@ -45,7 +45,7 @@ cleanup() {
         return
     fi
     CLEANUP_DONE=1
-    
+    echo -e "\n\nCleaning up before exit...\n"
     log "INFO" "Attempting to restore previous iptables rules"
     if [ -f "$LATEST_BACKUP" ]; then
         iptables-restore < "$LATEST_BACKUP"
@@ -142,10 +142,8 @@ start_vpn() {
     
     # Wait for VPN interface to appear
     log "INFO" "Waiting for VPN interface $VPN_INTERFACE to come up..."
-    echo -n "["
     for ((i=1; i<=VPN_TIMEOUT; i++)); do
         if ip link show | grep -q "$VPN_INTERFACE"; then
-            echo -e "]\n"
             log "INFO" "VPN interface $VPN_INTERFACE is up!"
             setup_iptables
             return 0
@@ -154,7 +152,6 @@ start_vpn() {
         echo -en "\r [${i}s of ${VPN_TIMEOUT}s]"
         sleep 1
     done
-    echo -e "]\n"
     
     log "ERROR" "VPN interface $VPN_INTERFACE did not come up within $VPN_TIMEOUT seconds"
     return 1
@@ -258,7 +255,7 @@ show_status() {
         count=$((count + 1))
         if [ $count -gt 10 ]; then
             count=0
-            echo -en "\r VPN Connected [✓] - Press Ctrl+C to disconnect"
+            echo -en "\r VPN Connected [✓] - Press Ctrl+C to disconnect "
         fi
         
         sleep 1
