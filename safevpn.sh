@@ -125,7 +125,7 @@ start_vpn() {
     
     # Connect to VPN
     log "INFO" "Connecting to VPN using config file: $config_file"
-    log "INFO" "VPN interface detected from config file: $VPN_INTERFACE\n"
+    log "INFO" "VPN interface detected from config file: $VPN_INTERFACE"
     
     # Start OpenVPN in the background, redirecting warnings
     openvpn --config "$config_file" --daemon 2>/tmp/openvpn_warnings.log
@@ -237,11 +237,11 @@ show_status() {
     echo "                VPN CONNECTED SUCCESSFULLY                "
     echo "---------------------------------------------------------"
     echo ""
-    echo " * Main interface: $MAIN_INTERFACE"
     echo " * Interface: $VPN_INTERFACE"
     echo " * VPN IP address: $(ip addr show "$VPN_INTERFACE" | grep 'inet ' | awk '{print $2}')"
-    echo " * DNS servers: $(grep -oP 'nameserver \K[0-9.]+|nameserver \K[0-9a-f:]+' /etc/resolv.conf | tr '\n' ' ')"
+    echo " * Gateway: $(ip route | grep "$VPN_INTERFACE" | grep -m 1 "via" | awk '{print $3}')"
     echo " * Server: $VPN_SERVER"
+    echo " * DNS servers: $(grep -oP 'nameserver \K[0-9.]+|nameserver \K[0-9a-f:]+' /etc/resolv.conf | tr '\n' ' ')"
     echo " * Available VPN networks"
     ip route | grep "$VPN_INTERFACE" | awk '{print "   - " $1}'
     echo ""
