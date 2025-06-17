@@ -45,7 +45,7 @@ cleanup() {
         return
     fi
     CLEANUP_DONE=1
-    echo -e "\n\nCleaning up before exit...\n"
+    echo -e "\nCleaning up before exit...\n"
     log "INFO" "Attempting to restore previous iptables rules"
     if [ -f "$LATEST_BACKUP" ]; then
         iptables-restore < "$LATEST_BACKUP"
@@ -149,7 +149,6 @@ start_vpn() {
             return 0
         fi
         log "DEBUG" "Waiting for VPN interface... ${i}s of ${VPN_TIMEOUT}s"
-        echo -en "\r [${i}s of ${VPN_TIMEOUT}s]"
         sleep 1
     done
     
@@ -231,10 +230,9 @@ setup_iptables() {
 show_status() {
     local count=0
     # Keep the script running until the user stops it
-    log "INFO" "VPN connection established. Press Ctrl+C to disconnect.\n"
     echo ""
     echo "---------------------------------------------------------"
-    echo "                VPN CONNECTED SUCCESSFULLY                "
+    echo "                VPN CONNECTION STATUS                   "
     echo "---------------------------------------------------------"
     echo ""
     echo " * Public IP: $(curl -s --max-time 5 https://ifconfig.me || curl -s --max-time 5 https://api.ipify.org || curl -s --max-time 5 https://checkip.amazonaws.com || echo "Unable to determine")"
